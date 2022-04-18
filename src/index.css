@@ -5,3 +5,15 @@
 .btn-calc{
     @apply bg-blue-500 hover:bg-blue-700 text-white text-3xl font-bold py-2 px-4 place-content-center;
 }
+
+.calc-wrapper{
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#86BBD8] py-2 px-4 border-4 border-black;
+}
+
+.btn-clear-calc{
+    @apply bg-red-500 hover:bg-red-700 text-white text-3xl font-bold py-2 px-4 place-content-center;
+}
+
+.calc-display{
+    @apply text-3xl font-bold py-2 px-4 col-span-4 border-2 border-zinc-900 bg-white;
+}
