@@ -1,7 +1,7 @@
-function Display(props) {
+function Display() {
   return (
     <div id="display" className="calc-display">
-      {props.currVal}
+      0
     </div>
   );
 }
