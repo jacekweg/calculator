@@ -16,6 +16,7 @@ class App extends React.Component {
     this.handleOperator = this.handleOperator.bind(this);
     this.handleResult = this.handleResult.bind(this);
     this.reevaluate = this.reevaluate.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   handleDigit(e) {
@@ -34,12 +35,19 @@ class App extends React.Component {
     //for tests to work
   }
 
+  handleDelete() {
+    let currentState = document.getElementById("display").innerText;
+    document.getElementById("display").innerText = currentState.slice(
+      0,
+      currentState.length - 1
+    );
+  }
+
   handleOperator(e) {
     let operator = e.target.value;
     let currentState = document.getElementById("display").innerText;
     const lastChar = currentState.slice(currentState.length - 1);
     let arr = currentState.split(/[x/+-]/);
-    console.log(arr);
     let empties = arr.length - arr.filter(String).length;
 
     const numberOfOperators =
@@ -50,11 +58,7 @@ class App extends React.Component {
         .split(/[/x+-]/)
         .every((ele) => /^(?!-0(\.0+)?$)-?(0|[1-9]\d*)(\.\d+)?$|^$/.test(ele));
 
-      const test = (currentState + operator + "0").split(/[/x+-]/);
-      console.log(test);
-
       if (!canAddDecimal) {
-        console.log("Second decimal point");
         return;
       }
     }
@@ -63,13 +67,12 @@ class App extends React.Component {
       document.getElementById("display").innerText = currentState + operator;
     }
 
-    console.log("operators: " + numberOfOperators);
+    // console.log("operators: " + numberOfOperators);
 
     if (/\D/.test(lastChar) && lastChar === "-" && operator !== "-") {
       currentState =
         currentState.slice(0, currentState.length - numberOfOperators + 1) +
         operator;
-      // console.log(currentState);
 
       if (currentState.length === 1) {
         document.getElementById("display").innerText = "0";
@@ -100,7 +103,6 @@ class App extends React.Component {
   reevaluate(str) {
     let answer = "";
     str = str.replaceAll("x", "*");
-    console.log(str);
     if (/^[\d()/*.+-]+$/.test(str)) {
       try {
         answer = evaluate(str);
@@ -134,7 +136,11 @@ class App extends React.Component {
           >
             C
           </button>
-          <button id="delete" className="btn-calc col-span-2">
+          <button
+            id="delete"
+            className="btn-calc col-span-2"
+            onClick={this.handleDelete}
+          >
             <FiDelete className="mx-auto" size={35} />
           </button>
           <button
@@ -259,7 +265,7 @@ class App extends React.Component {
           </button>
           <button
             id="equals"
-            className="btn-calc"
+            className="btn-delete-calc"
             onClick={this.handleResult}
             value="="
           >
