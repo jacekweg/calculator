@@ -11,7 +11,7 @@
 }
 
 .btn-clear-calc{
-    @apply bg-red-500 hover:bg-red-700 text-white text-3xl font-bold py-2 px-4 place-content-center ;
+    @apply bg-red-500 hover:bg-red-700 text-white text-3xl font-bold py-2 px-4 place-content-center;
 }
 
 .btn-delete-calc{

@@ -7,27 +7,25 @@ import { evaluate, format } from "mathjs";
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      processing: false,
-      currVal: 0,
-    };
+
     this.handleDigit = this.handleDigit.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.handleOperator = this.handleOperator.bind(this);
     this.handleResult = this.handleResult.bind(this);
-    this.reevaluate = this.reevaluate.bind(this);
+    this.calculate = this.calculate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
   }
 
   handleDigit(e) {
     const digit = e.target.value;
-    const currentValue =
-      this.state.currVal === 0 ? digit : this.state.currVal + digit;
-    this.setState({ currVal: Number(currentValue) });
 
     //for tests to work
     let curr = document.getElementById("display").innerText;
-    if ((curr !== "0" || /\D/.test(curr)) && curr !== "Error") {
+    if (
+      (curr !== "0" || /\D/.test(curr)) &&
+      curr !== "Error" &&
+      curr !== "Infinity"
+    ) {
       document.getElementById("display").innerText = curr + digit;
     } else {
       document.getElementById("display").innerText = digit;
@@ -97,16 +95,17 @@ class App extends React.Component {
 
   handleResult() {
     let equation = document.getElementById("display").innerText;
-    document.getElementById("display").innerText = this.reevaluate(equation);
+    document.getElementById("display").innerText = this.calculate(equation);
   }
 
-  reevaluate(str) {
+  calculate(str) {
     let answer = "";
     str = str.replaceAll("x", "*");
     if (/^[\d()/*.+-]+$/.test(str)) {
       try {
         answer = evaluate(str);
         answer = format(answer, { precision: 8 });
+        if (isNaN(Number(answer)) || answer === "Infinity") answer = "Error";
       } catch (er) {
         answer = "Error";
         console.log(er.name + ", " + er.message);
