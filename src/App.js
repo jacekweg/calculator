@@ -7,6 +7,9 @@ import { evaluate, format } from "mathjs";
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      display: "0",
+    };
 
     this.handleDigit = this.handleDigit.bind(this);
     this.handleClear = this.handleClear.bind(this);
@@ -18,41 +21,45 @@ class App extends React.Component {
 
   handleDigit(e) {
     const digit = e.target.value;
+    const { display: curr } = this.state;
 
-    //for tests to work
-    let curr = document.getElementById("display").innerText;
-    if (
-      (curr !== "0" || /\D/.test(curr)) &&
-      curr !== "Error" &&
-      curr !== "Infinity"
-    ) {
-      document.getElementById("display").innerText = curr + digit;
+    if ((curr !== "0" || /\D/.test(curr)) && curr !== "Error") {
+      this.setState({
+        display: curr + digit,
+      });
     } else {
-      document.getElementById("display").innerText = digit;
+      this.setState({
+        display: digit,
+      });
     }
-    //for tests to work
   }
 
   handleDelete() {
-    let currentState = document.getElementById("display").innerText;
-    document.getElementById("display").innerText = currentState.slice(
-      0,
-      currentState.length - 1
-    );
+    const { display: curr } = this.state;
+    this.setState({
+      display: curr.length > 1 ? curr.slice(0, curr.length - 1) : "0",
+    });
   }
 
   handleOperator(e) {
     let operator = e.target.value;
-    let currentState = document.getElementById("display").innerText;
-    const lastChar = currentState.slice(currentState.length - 1);
-    let arr = currentState.split(/[x/+-]/);
+    const { display: curr } = this.state;
+    const lastChar = curr.slice(curr.length - 1);
+    let arr = curr.split(/[x/+-]/);
     let empties = arr.length - arr.filter(String).length;
 
-    const numberOfOperators =
-      currentState.split(/[x/+-]/).filter((a) => a).length + empties;
+    const numOfOperators =
+      curr.split(/[x/+-]/).filter((a) => a).length + empties;
+
+    if (lastChar === "." && operator === "-") {
+      this.setState({
+        display: curr.slice(0, curr.length - 1) + operator,
+      });
+      return;
+    }
 
     if (operator === ".") {
-      const canAddDecimal = (currentState + operator + "0")
+      const canAddDecimal = (curr + operator + "0")
         .split(/[/x+-]/)
         .every((ele) => /^(?!-0(\.0+)?$)-?(0|[1-9]\d*)(\.\d+)?$|^$/.test(ele));
 
@@ -62,22 +69,25 @@ class App extends React.Component {
     }
 
     if (operator === "-" && lastChar !== "-") {
-      document.getElementById("display").innerText = currentState + operator;
+      this.setState({
+        display: curr + operator,
+      });
     }
 
-    // console.log("operators: " + numberOfOperators);
-
     if (/\D/.test(lastChar) && lastChar === "-" && operator !== "-") {
-      currentState =
-        currentState.slice(0, currentState.length - numberOfOperators + 1) +
-        operator;
+      const newCurr =
+        curr.slice(0, curr.length - numOfOperators + 1) + operator;
 
-      if (currentState.length === 1) {
-        document.getElementById("display").innerText = "0";
+      if (newCurr.length === 1) {
+        this.setState({
+          display: "0",
+        });
         return;
       }
 
-      document.getElementById("display").innerText = currentState;
+      this.setState({
+        display: newCurr,
+      });
       return;
     }
 
@@ -86,16 +96,23 @@ class App extends React.Component {
     }
 
     if (/\D/.test(lastChar) && lastChar !== "-" && operator !== "-") {
-      document.getElementById("display").innerText =
-        currentState.slice(0, currentState.length - 1) + operator;
+      this.setState({
+        display: curr.slice(0, curr.length - 1) + operator,
+      });
     } else {
-      document.getElementById("display").innerText = currentState + operator;
+      document.getElementById("display").innerText = curr + operator;
+      this.setState({
+        display: curr + operator,
+      });
     }
   }
 
   handleResult() {
-    let equation = document.getElementById("display").innerText;
-    document.getElementById("display").innerText = this.calculate(equation);
+    const { display: equation } = this.state;
+
+    this.setState({
+      display: this.calculate(equation),
+    });
   }
 
   calculate(str) {
@@ -104,29 +121,26 @@ class App extends React.Component {
     if (/^[\d()/*.+-]+$/.test(str)) {
       try {
         answer = evaluate(str);
-        answer = format(answer, { precision: 8 });
+        answer = format(answer, { precision: 14 });
         if (isNaN(Number(answer)) || answer === "Infinity") answer = "Error";
       } catch (er) {
         answer = "Error";
         console.log(er.name + ", " + er.message);
       }
     }
-    return answer;
+    return String(answer);
   }
 
   handleClear() {
-    this.setState({ currVal: 0 });
-
-    //for tests to work
-    document.getElementById("display").innerText = "0";
-    //for tests to work
+    this.setState({ display: "0" });
   }
 
   render() {
+    const { display } = this.state;
     return (
       <div className="calc-wrapper">
         <div className="grid grid-rows-7 grid-cols-4 align-middle gap-1 text-right">
-          <Display />
+          <Display value={display} />
 
           <button
             id="clear"

@@ -1,7 +1,9 @@
-function Display() {
+import React from "react";
+
+function Display({ value }) {
   return (
     <div id="display" className="calc-display">
-      0
+      {value}
     </div>
   );
 }
