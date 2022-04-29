@@ -23,6 +23,8 @@ class App extends React.Component {
     const digit = e.target.value;
     const { display: curr } = this.state;
 
+    if (curr.length + 1 > 10) return;
+
     if ((curr !== "0" || /\D/.test(curr)) && curr !== "Error") {
       this.setState({
         display: curr + digit,
@@ -50,6 +52,8 @@ class App extends React.Component {
 
     const numOfOperators =
       curr.split(/[x/+-]/).filter((a) => a).length + empties;
+
+    if (curr.length + 2 > 10) return;
 
     if (lastChar === "." && operator === "-") {
       this.setState({
@@ -121,8 +125,13 @@ class App extends React.Component {
     if (/^[\d()/*.+-]+$/.test(str)) {
       try {
         answer = evaluate(str);
-        answer = format(answer, { precision: 14 });
-        if (isNaN(Number(answer)) || answer === "Infinity") answer = "Error";
+        answer = format(answer, { precision: 6, lowerExp: -12, upperExp: 12 });
+        if (
+          isNaN(Number(answer)) ||
+          answer === "Infinity" ||
+          answer.length > 10
+        )
+          answer = "Error";
       } catch (er) {
         answer = "Error";
         console.log(er.name + ", " + er.message);

@@ -6,16 +6,16 @@
     @apply bg-blue-500 hover:bg-blue-700 text-white text-3xl font-bold py-2 px-4 place-content-center align-middle;
 }
 
-.calc-wrapper{
-    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#86BBD8] py-2 px-4 border-4 border-black;
-}
-
 .btn-clear-calc{
     @apply bg-red-500 hover:bg-red-700 text-white text-3xl font-bold py-2 px-4 place-content-center;
 }
 
 .btn-delete-calc{
     @apply bg-green-500 hover:bg-green-700 text-white text-3xl font-bold py-2 px-4 place-content-center align-middle;
+}
+
+.calc-wrapper{
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 w-9/12 sm:w-auto -translate-y-1/2 bg-[#86BBD8] py-2 px-4 border-4 border-black;
 }
 
 .calc-display{
